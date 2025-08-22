@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Karaoke LRC Maker</title>
+</head>
+<body>
+    <h1>Karaoke LRC Maker</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li style="color:red;">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+	<img src="static/karaoke.jpg" alt="Karaoke" style="width:20% ; border:5px solid #555"><br><br>
+    <form method="post" enctype="multipart/form-data">
+        <label>Audio (mp3/wav): <input type="file" name="audio" required></label><br><br>
+        <label>Lyrics (.txt): <input type="file" name="lyrics" required></label><br><br>
+        <label>Video (.mp4): <input type="file" name="video" required></label><br><br>
+
+        <label for="font_size">Font grootte</label>
+        <input list="font_size" name="font_size" id="font_size" required>
+        <datalist id="font_size">
+            <option value="18">
+            <option value="20">
+            <option value="24">
+        </datalist>
+        <br><br>
+        <label for="alignment">Alignment</label>
+        <input list="alignment" name="alignment" id="alignment" required>
+        <datalist id="alignment">
+            <option value="bottom">Onder</option>
+            <option value="middle">Midden</option>
+            <option value="top">Boven</option> 
+        </datalist>
+        <br><br>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button type="submit">Genereer LRC + Video</button>
+    </form>
+</body>
+</html>
