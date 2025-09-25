@@ -5,9 +5,7 @@ Standaard video generatie instelling:
 --fallback-duration", type=float, default=4.0, help="Seconds for last-line duration when next timestamp is unknown")
 
 # Style (libass / ffmpeg subtitles)
---font", default="Arial", help="Subtitle font name")
---font-size", type=int, SET IN SCREEN
---alignment", choices=["top", "middle", "center", "bottom"], default="bottom" , SET IN SCREEN
+--mode", choices=["word", "line"], default="word" , SET IN SCREEN
 --primary-colour", default="FFFFFF", help="Hex text colour, e.g. FFFFFF")
 --outline-colour", default="000000", help="Hex outline colour, e.g. 000000")
 --outline", type=int, default=2, help="Outline thickness")
@@ -101,6 +99,7 @@ def index():
         video_out_path = os.path.join(app.config["OUTPUT_FOLDER"], video_out_name)
         print(f"LRC path: {lrc_path}, Video out path: {video_out_path}")
         
+        mode = request.form.get("mode", "word")
 
         # 1. Run lrc_maker.py
         flash ("LRC aan het genereren...")
@@ -115,21 +114,16 @@ def index():
             flash("Fout bij genereren van de LRC: " + result.stderr)
             return redirect(request.url)
         
-        font_size = request.form.get("font_size", "20")
-        alignment = request.form.get("alignment", "bottom")
-        
         # 2. Run karaoke_maker.py
         flash("LRC succesvol gegenereerd. Nu karaokevideo maken...")
-        print(f"Video: {video_path}, Audio: {audio_path}, LRC: {lrc_path}, Output: {video_out_path}, Font Size: {font_size}, Alignment: {alignment}, Output SRT: {os.path.join(app.config['OUTPUT_FOLDER'], base_name + '.srt')}")
+        print("LRC succesvol gegenereerd. Nu karaokevideo maken...")
+        print(f"Karaoke aan het genereren met Video: {video_path}, Audio: {audio_path}, LRC: {lrc_path}, Output: {video_out_path}, Mode: {mode}, Output SRT: {os.path.join(app.config['OUTPUT_FOLDER'], base_name + '.srt')}")
         result2 = subprocess.run([
             "python", "karaoke_maker.py",
             "--video", video_path,
             "--audio", audio_path,
             "--lrc", lrc_path,
             "--out", video_out_path,
-            "--font", "Verdana",
-            "--font-size", font_size,
-            "--alignment", alignment,
             "--outsrt", os.path.join(app.config["OUTPUT_FOLDER"], base_name + ".srt")
         ], capture_output=True, text=True)
 
@@ -146,6 +140,7 @@ def index():
 
 @app.route("/download/<filename>")
 def download(filename):
+    flash(f"Bestand {filename} is aangemaakt in folder {app.config["OUTPUT_FOLDER"]}...")
     return send_from_directory(app.config["OUTPUT_FOLDER"], filename, as_attachment=True)
 
 if __name__ == "__main__":

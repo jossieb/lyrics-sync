@@ -3,6 +3,46 @@
 <head>
     <meta charset="utf-8">
     <title>Karaoke LRC Maker</title>
+    <style>
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .form-container {
+            transition: opacity 0.3s ease;
+        }
+        
+        .processing {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .progress-info {
+            background-color: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #0066cc;
+        }
+    </style>
 </head>
 <body>
     <h1>Karaoke LRC Maker</h1>
@@ -16,30 +56,55 @@
       {% endif %}
     {% endwith %}
     
-	<img src="static/karaoke.jpg" alt="Karaoke" style="width:20% ; border:5px solid #555"><br><br>
-    <form method="post" enctype="multipart/form-data">
-        <label>Audio (mp3/wav): <input type="file" name="audio" required></label><br><br>
-        <label>Lyrics (.txt): <input type="file" name="lyrics" required></label><br><br>
-        <label>Video (.mp4): <input type="file" name="video" required></label><br><br>
+    <img src="static/karaoke.jpg" alt="Karaoke" style="width:20% ; border:5px solid #555"><br><br>
+    
+    <!-- Loading indicator -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div class="progress-info">
+            <h3>🎵 Bezig met verwerken...</h3>
+            <p><strong>Dit kan wel >30 minuten duren</strong></p>
+            <p>We zijn bezig met:</p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>Audio analyseren</li>
+                <li>Lyrics synchroniseren</li>
+                <li>Video genereren</li>
+                <li>LRC bestand maken</li>
+            </ul>
+            <p><em>Sluit deze pagina niet af tijdens het proces!</em></p>
+        </div>
+    </div>
+    
+    <div id="form-container" class="form-container">
+        <form method="post" enctype="multipart/form-data" id="karaoke-form">
+            <label>Audio (mp3/wav): <input type="file" name="audio" required></label><br><br>
+            <label>Lyrics (.txt): <input type="file" name="lyrics" required></label><br><br>
+            <label>Video (.mp4): <input type="file" name="video" required></label><br><br>
+            <label>Mode : <input type="text" value="line" readonly></label><br><br>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button type="submit" id="submit-btn">Genereer LRC + Video</button>
+        </form>
+    </div>
 
-        <label for="font_size">Font grootte</label>
-        <input list="font_size" name="font_size" id="font_size" required>
-        <datalist id="font_size">
-            <option value="18">
-            <option value="20">
-            <option value="24">
-        </datalist>
-        <br><br>
-        <label for="alignment">Alignment</label>
-        <input list="alignment" name="alignment" id="alignment" required>
-        <datalist id="alignment">
-            <option value="bottom">Onder</option>
-            <option value="middle">Midden</option>
-            <option value="top">Boven</option> 
-        </datalist>
-        <br><br>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <button type="submit">Genereer LRC + Video</button>
-    </form>
+    <script>
+        document.getElementById('karaoke-form').addEventListener('submit', function(e) {
+            // Toon loading indicator
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('form-container').classList.add('processing');
+            
+            // Wijzig submit button
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.textContent = 'Bezig met verwerken...';
+            submitBtn.disabled = true;
+            
+            // Scroll naar loading indicator
+            document.getElementById('loading').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        });
+        
+
+    </script>
 </body>
 </html>

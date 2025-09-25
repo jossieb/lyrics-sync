@@ -1,4 +1,15 @@
 # Karaoke maker
+- Version:      0.9.0
+- Date:         22/08/2025  
+- Developer:    JossieB
+- Target:       Generate a videoclip that can be used as Karaoke clip
+-----------------------
+
+- Version:      1.0
+- Date:         27/08/2025  
+- Developer:    JossieB
+- Target:       Sync words or lines with vocal part, you choose!
+-----------------------
 
 This project consists of 3 parts
 
@@ -51,6 +62,7 @@ This project consists of 3 parts
         - Video = sample.mp4
         - Font size = 20
         - Alignment = bottom
+        - Modus = word
 - hit <GENEREER LRC + VIDEO>
 
 # Need help?

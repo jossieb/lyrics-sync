@@ -346,7 +346,7 @@ def main():
 
     # Style (libass / ffmpeg subtitles)
     ap.add_argument("--font", default="Arial", help="Subtitle font name")
-    ap.add_argument("--font-size", type=int, default=48, help="Subtitle font size")
+    ap.add_argument("--font-size", type=int, default=20, help="Subtitle font size")
     ap.add_argument("--alignment", choices=["top", "middle", "center", "bottom"], default="bottom", help="Subtitle vertical alignment")
     ap.add_argument("--primary-colour", default="FFFFFF", help="Hex text colour, e.g. FFFFFF")
     ap.add_argument("--outline-colour", default="000000", help="Hex outline colour, e.g. 000000")
