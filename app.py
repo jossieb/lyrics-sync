@@ -22,9 +22,15 @@ Standaard video generatie instelling:
 --pix-fmt", default="yuv420p", help="Pixel format (yuv420p recommended for compatibility)")
 --no-shortest", action="store_true", help="Do not stop at the shortest stream; render full length of video")
 
+version: 1.1
+reden: Toevoegen minimale duur per regel en check op overlappende regels
+datum: 2025-09-26
+auteur: JossieB
+
 """
 import os
 import subprocess
+import time
 from flask import Flask, request, render_template, send_from_directory, redirect, url_for, flash
 from flask_wtf.csrf import CSRFProtect
 
@@ -61,6 +67,7 @@ def allowed_file(filename, allowed):
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
+        start_time = time.time()   # <-- start timer
         
         # Check files
         audio = request.files.get("audio")
@@ -130,7 +137,15 @@ def index():
         if result2.returncode != 0:
             flash("Fout bij genereren van de karaokevideo: " + result2.stderr)
             return redirect(request.url)
-        flash("Karaokevideo succesvol gegenereerd!")
+        
+        # Bereken en print doorlooptijd
+        elapsed = time.time() - start_time
+        hrs, rem = divmod(int(elapsed), 3600)
+        mins, secs = divmod(rem, 60)
+        elapsed_str = f"{hrs:02d}:{mins:02d}:{secs:02d}"
+        print(f"Doorlooptijd totaal (hh:mm:ss): {elapsed_str}")
+        flash(f"Karaokevideo succesvol gegenereerd: doorlooptijd: {elapsed_str}")   
+        
         # Redirect to download
         return redirect(url_for("download", filename=video_out_name))
             

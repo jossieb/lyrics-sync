@@ -16,6 +16,11 @@ Installatie:
 
 Gebruik:
     python audio_focused_lrc_maker.py --audio song.mp3 --lyrics lyrics.txt --out karaoke.lrc
+    
+version: 1.1
+reden: Toevoegen minimale duur per regel en check op overlappende regels
+datum: 2025-09-26
+auteur: JossieB
 """
 from __future__ import annotations
 
@@ -43,7 +48,9 @@ try:
 except ImportError:
     HAS_LIBROSA = False
     print("⚠️  librosa not found - using simplified audio analysis")
-
+    
+# Forceer een minimale duur per regel (bijv. 1.5s)
+MIN_LINE_DURATION = 1.5  # seconden
 
 # -----------------------------
 # Enhanced Data Classes
@@ -335,6 +342,9 @@ def find_line_boundaries_multimodal(normalized_lyrics: List[str], word_sequence:
     
     # Strategy 3: Silence-based validation
     final_boundaries = validate_with_silence(refined_boundaries, audio_features.silence_regions)
+
+    # Safety check to ensure no overlaps
+    final_boundaries = enforce_non_overlapping(final_boundaries)
     
     return final_boundaries
 
@@ -458,6 +468,17 @@ def validate_with_silence(boundaries: List[Tuple[float, float]],
     
     return validated
 
+
+def enforce_non_overlapping(boundaries: List[Tuple[float, float]]) -> List[Tuple[float, float]]:
+    result = []
+    prev_end = 0.0
+    for start, end in boundaries:
+        start = max(start, prev_end)
+        if end - start < MIN_LINE_DURATION:
+            end = start + MIN_LINE_DURATION
+        result.append((start, end))
+        prev_end = end
+    return result
 
 # -----------------------------
 # Utility Functions

@@ -11,6 +11,11 @@
 - Target:       Sync words or lines with vocal part, you choose!
 -----------------------
 
+- Version:      1.1
+- Date:         26/09/2025  
+- Developer:    JossieB
+- Target:       Add minimal time per text line and check for overlap
+
 This project consists of 3 parts
 
 ### lrc file maker

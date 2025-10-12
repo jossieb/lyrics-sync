@@ -40,6 +40,11 @@ Notes:
 - It supports multiple timestamps per line (the same lyric repeated at different times).
 - It tolerates both mm:ss.xx and mm:ss formats, and [offset:1234] tags (ms) in the LRC.
 - For best results, keep your video and audio lengths roughly similar; ffmpeg will stop at the shortest by default.
+
+version: 1.1
+reden: Toevoegen minimale duur per regel en check op overlappende regels
+datum: 2025-09-26
+auteur: JossieB
 """
 
 from __future__ import annotations
