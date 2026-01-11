@@ -157,30 +157,6 @@ def ms_to_srt_timestamp(ms: int) -> str:
     millis = ms % 1000
     return f"{hours:02d}:{minutes:02d}:{seconds:02d},{millis:03d}"
 
-"""
-def build_srt(events: List[LyricEvent], *, offset_ms: int, fallback_duration_ms: int) -> str:
-    Create SRT text from events. Each event ends at the next event's start - 100ms
-    or uses fallback_duration_ms for the last event.
-    
-    lines = []
-    n = len(events)
-    for i, ev in enumerate(events, start=1):
-        start = ev.start_ms + offset_ms
-        if i < n:
-            next_start = events[i].start_ms + offset_ms
-            end = max(start + 400, next_start - 100)  # ensure min 400ms visibility
-        else:
-            end = start + fallback_duration_ms
-
-        lines.append(str(i))
-        lines.append(f"{ms_to_srt_timestamp(start)} --> {ms_to_srt_timestamp(end)}")
-        # Escape potential SRT-problematic characters minimally; SRT is pretty lax.
-        text = ev.text.replace("\u2028", " ").replace("\u2029", " ")
-        lines.append(text)
-        lines.append("")
-
-    return "\n".join(lines)
-"""
 
 def convert_lrc_to_srt(lrc_content: str, offset_ms: int = 0, fallback_duration_ms: int = 4000) -> str:
     """
@@ -326,6 +302,8 @@ def build_ffmpeg_cmd(
         "-crf", str(crf),
         "-c:a", audio_codec,
         "-b:a", audio_bitrate,
+        "-vsync", "cfr",      # Forceert Constant Frame Rate
+        "-async", "1",        # Synchroniseert audio samples aan de tijdstempels
     ]
     if shortest:
         cmd += ["-shortest"]

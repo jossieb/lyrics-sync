@@ -229,7 +229,7 @@ def transcribe_with_word_alignment(audio_path: str, model_name: str = "large") -
         audio_path,
         language="nl",
         word_timestamps=True,
-        condition_on_previous_text=True,
+        condition_on_previous_text=False,
         temperature=0.0,  # More deterministic
         beam_size=5,      # Better accuracy
         best_of=5
